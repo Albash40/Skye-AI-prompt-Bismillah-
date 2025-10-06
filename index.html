@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skye AI Interface</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        /* CSS Variables for Easy Theme Management */
+        :root {
+            --primary-blue: #007bff;
+            --background-white: #ffffff;
+            --light-gray: #f8f9fa;
+            --text-dark: #343a40;
+            --border-color: #dee2e6;
+            --sidebar-width: 260px;
+        }
+
+        /* Basic Reset and Body Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-white);
+            color: var(--text-dark);
+            /* Prevent content from hiding behind the fixed bottom nav */
+            padding-bottom: 70px;
+        }
+
+        /* --- Top Navigation Bar --- */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: var(--background-white);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .top-nav .menu-toggle,
+        .top-nav .profile-icon {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            cursor: pointer;
+        }
+
+        .top-nav .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+
+        /* --- Collapsible Sidebar --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: calc(-1 * var(--sidebar-width)); /* Start hidden off-screen */
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--light-gray);
+            border-right: 1px solid var(--border-color);
+            z-index: 1010;
+            transition: left 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 1.15rem 1.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-nav {
+            list-style-type: none;
+            flex-grow: 1;
+            padding-top: 1rem;
+        }
+
+        .sidebar-nav li a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-size: 1rem;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .sidebar-nav li a:hover,
+        .sidebar-nav li a.active {
+            background-color: var(--primary-blue);
+            color: var(--background-white);
+        }
+
+        .sidebar-nav li a i {
+            width: 20px; /* Aligns the text nicely */
+            text-align: center;
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            padding: 2rem;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .content-section {
+            display: none; /* Hide all sections by default */
+        }
+
+        .content-section.active {
+            display: block; /* Show only the active section */
+        }
+        
+        .content-section h1 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+
+        /* --- Fixed Bottom Navigation Bar --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--background-white);
+            border-top: 1px solid var(--border-color);
+            z-index: 999;
+            padding: 0.5rem 0;
+        }
+
+        .bottom-nav a {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--text-dark);
+            padding: 0.25rem 0;
+            transition: color 0.2s ease;
+        }
+
+        .bottom-nav a.active,
+        .bottom-nav a:hover {
+            color: var(--primary-blue);
+        }
+
+        .bottom-nav a i {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .bottom-nav a span {
+            font-size: 0.75rem;
+        }
+        
+        /* Overlay for when sidebar is open */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1005;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <header class="top-nav">
+        <i class="fa-solid fa-bars menu-toggle"></i>
+        <div class="logo">Skye</div>
+        <i class="fa-solid fa-circle-user profile-icon"></i>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">Skye AI</div>
+        <ul class="sidebar-nav">
+            <li><a href="#" class="nav-link active" data-target="new-chat"><i class="fa-solid fa-wand-magic-sparkles"></i> New AI Chat</a></li>
+            <li><a href="#" class="nav-link" data-target="library"><i class="fa-solid fa-swatchbook"></i> Library</a></li>
+            <li><a href="#" class="nav-link" data-target="history"><i class="fa-solid fa-clock-rotate-left"></i> History</a></li>
+            <li><a href="#" class="nav-link" data-target="prompt-hub"><i class="fa-solid fa-lightbulb"></i> Prompt Hub</a></li>
+            <li><a href="#" class="nav-link" data-target="prompt-library"><i class="fa-solid fa-book-bookmark"></i> Prompt Hub Library</a></li>
+            <li><a href="#" class="nav-link" data-target="custom-prompt"><i class="fa-solid fa-pen-to-square"></i> Custom Prompt</a></li>
+            <li><a href="#" class="nav-link" data-target="profile"><i class="fa-solid fa-user"></i> Profile</a></li>
+            <li><a href="#" class="nav-link" data-target="premium"><i class="fa-solid fa-crown"></i> Premium Subscription</a></li>
+            <li><a href="#" class="nav-link" data-target="contact"><i class="fa-solid fa-envelope"></i> Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <section id="new-chat" class="content-section active">
+            <h1><i class="fa-solid fa-wand-magic-sparkles"></i> New AI Chat</h1>
+            <p>This is the main chat interface. Start a new conversation with Skye AI here.</p>
+        </section>
+
+        <section id="library" class="content-section">
+            <h1><i class="fa-solid fa-swatchbook"></i> Library</h1>
+            <p>Your saved resources, documents, and other materials are stored here.</p>
+        </section>
+
+        <section id="history" class="content-section">
+            <h1><i class="fa-solid fa-clock-rotate-left"></i> History</h1>
+            <p>Review your past conversations and interactions with the AI.</p>
+        </section>
+        
+        <section id="prompt-hub" class="content-section">
+            <h1><i class="fa-solid fa-lightbulb"></i> Prompt Hub</h1>
+            <p>Discover new and trending prompts to use with the AI.</p>
+        </section>
+        
+        <section id="prompt-library" class="content-section">
+            <h1><i class="fa-solid fa-book-bookmark"></i> Prompt Hub Library</h1>
+            <p>Your personal collection of saved prompts from the hub.</p>
+        </section>
+
+        <section id="custom-prompt" class="content-section">
+            <h1><i class="fa-solid fa-pen-to-square"></i> Custom Prompt</h1>
+            <p>Create and manage your own custom prompts for tailored AI responses.</p>
+        </section>
+        
+        <section id="profile" class="content-section">
+            <h1><i class="fa-solid fa-user"></i> Profile</h1>
+            <p>View and edit your user profile and account settings.</p>
+        </section>
+
+        <section id="premium" class="content-section">
+            <h1><i class="fa-solid fa-crown"></i> Premium Subscription</h1>
+            <p>Manage your premium subscription and explore exclusive features.</p>
+        </section>
+
+        <section id="contact" class="content-section">
+            <h1><i class="fa-solid fa-envelope"></i> Contact Us</h1>
+            <p>Get in touch with our support team for help or feedback.</p>
+        </section>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="#" class="nav-link" data-target="prompt-hub">
+            <i class="fa-solid fa-lightbulb"></i>
+            <span>Prompt Hub</span>
+        </a>
+        <a href="#" class="nav-link active" data-target="new-chat">
+            <i class="fa-solid fa-robot"></i>
+            <span>Skye AI</span>
+        </a>
+        <a href="#" class="nav-link" data-target="history">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>History</span>
+        </a>
+        <a href="#" class="nav-link" data-target="premium">
+            <i class="fa-solid fa-crown"></i>
+            <span>Premium</span>
+        </a>
+    </nav>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            // --- Sidebar Toggle Logic ---
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('show');
+            }
+
+            menuToggle.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            // --- Content Switching Logic ---
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    
+                    const targetId = this.dataset.target;
+
+                    // 1. Update Content Sections
+                    contentSections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === targetId) {
+                            section.classList.add('active');
+                        }
+                    });
+
+                    // 2. Update Nav Link Active States
+                    navLinks.forEach(navLink => {
+                        navLink.classList.remove('active');
+                        if (navLink.dataset.target === targetId) {
+                            navLink.classList.add('active');
+                        }
+                    });
+
+                    // 3. Close sidebar on link click (useful on mobile)
+                    if (sidebar.classList.contains('open')) {
+                        toggleSidebar();
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+
