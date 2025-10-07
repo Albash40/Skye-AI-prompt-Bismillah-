@@ -835,7 +835,227 @@
             });
         });
     </script>
+    
+<script>
+        // Text rotation for hero section
+        const heroTexts = [
+            {
+                title: "Turn Ideas Into Reality.",
+                subtitle: "Your AI-powered prompt hub to create, explore, and succeed.",
+                titleColor: "color-1",
+                subtitleColor: "color-2"
+            },
+            {
+                title: "Fuel Your Creativity.",
+                subtitle: "Build prompts, discover tools, and unlock unlimited potential.",
+                titleColor: "color-3",
+                subtitleColor: "color-4"
+            },
+            {
+                title: "All You Need Is One Prompt.",
+                subtitle: "Start now, and let AI handle the rest.",
+                titleColor: "color-5",
+                subtitleColor: "color-1"
+            },
+            {
+                title: "Empower Your Vision.",
+                subtitle: "From a single idea to a powerful project — faster than ever.",
+                titleColor: "color-2",
+                subtitleColor: "color-3"
+            },
+            {
+                title: "One Hub. Endless Possibilities.",
+                subtitle: "Create smarter, work faster, achieve more.",
+                titleColor: "color-4",
+                subtitleColor: "color-5"
+            }
+        ];
 
+        let currentTextIndex = 0;
+        const heroTitle = document.querySelector('.hero-title');
+        const heroSubtitle = document.querySelector('.hero-subtitle');
+
+        function rotateText() {
+            currentTextIndex = (currentTextIndex + 1) % heroTexts.length;
+            const text = heroTexts[currentTextIndex];
+            
+            heroTitle.innerHTML = `<span class="${text.titleColor}">${text.title}</span>`;
+            heroSubtitle.innerHTML = `<span class="${text.subtitleColor}">${text.subtitle}</span>`;
+        }
+
+        // Initialize text rotation
+        setInterval(rotateText, 5000);
+
+        // Filter functionality
+        const filterToggle = document.getElementById('filterToggle');
+        const filterOptions = document.getElementById('filterOptions');
+        const filterIcon = filterToggle.querySelector('.filter-icon i');
+
+        filterToggle.addEventListener('click', () => {
+            filterOptions.classList.toggle('active');
+            filterIcon.classList.toggle('fa-chevron-down');
+            filterIcon.classList.toggle('fa-chevron-up');
+        });
+
+        // Prompt data
+        const prompts = [
+            {
+                title: "How can I manage my time better?",
+                category: "productivity",
+                image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "What is the best way to avoid procrastination?",
+                category: "productivity",
+                image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "How do I set daily goals that I can achieve?",
+                category: "productivity",
+                image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "How can I build a productive morning routine?",
+                category: "productivity",
+                image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "What are the best productivity apps in 2025?",
+                category: "productivity",
+                image: "https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "How do I validate a business idea quickly?",
+                category: "business",
+                image: "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "How can I use SEO to grow my business?",
+                category: "business",
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "How do I build customer loyalty programs?",
+                category: "business",
+                image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "Top 5 Programming Languages to Learn in 2025",
+                category: "coding",
+                image: "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "How to Build Your First Web App from Scratch",
+                category: "coding",
+                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "How can I make money with affiliate marketing?",
+                category: "business",
+                image: "https://images.unsplash.com/photo-1563010880-76f83012d6b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                title: "How can I make money?",
+                category: "finance",
+                image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            }
+        ];
+
+        // Category mapping
+        const categoryMap = {
+            productivity: "Productivity & Work",
+            business: "Business & Marketing",
+            coding: "Coding & Technology",
+            finance: "Finance & Crypto",
+            creative: "Creative Writing & Media",
+            ai: "AI & Prompt Engineering",
+            lifestyle: "Lifestyle & Personal Growth",
+            content: "Content Creation",
+            special: "All Prompts"
+        };
+
+        // Render prompts
+        function renderPrompts(category = 'all') {
+            const container = document.getElementById('promptsContainer');
+            container.innerHTML = '';
+            
+            const filteredPrompts = category === 'all' 
+                ? prompts 
+                : prompts.filter(prompt => prompt.category === category);
+            
+            filteredPrompts.forEach(prompt => {
+                const card = document.createElement('div');
+                card.className = 'prompt-card';
+                card.innerHTML = `
+                    <div class="prompt-image" style="background-image: url('${prompt.image}')"></div>
+                    <div class="prompt-content">
+                        <div class="prompt-title">${prompt.title}</div>
+                        <div class="prompt-explore">Explore in video</div>
+                        <div class="prompt-buttons">
+                            <button class="prompt-btn youtube-btn">
+                                <i class="fab fa-youtube"></i> YouTube
+                            </button>
+                            <button class="prompt-btn tiktok-btn">
+                                <i class="fab fa-tiktok"></i> TikTok
+                            </button>
+                        </div>
+                        <div class="prompt-category">${categoryMap[prompt.category]}</div>
+                        <div class="explore-ai">
+                            <i class="fas fa-robot"></i> Explore with Skye AI
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Initialize prompts
+        renderPrompts();
+
+        // Filter option click handler
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Update active class
+                document.querySelectorAll('.filter-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Filter prompts
+                const category = this.getAttribute('data-category');
+                renderPrompts(category);
+                
+                // Close filter dropdown
+                filterOptions.classList.remove('active');
+                filterIcon.classList.remove('fa-chevron-up');
+                filterIcon.classList.add('fa-chevron-down');
+            });
+        });
+
+        // Coming soon modal
+        const comingSoonModal = document.getElementById('comingSoonModal');
+        const closeModal = document.getElementById('closeModal');
+        
+        // Show modal for buttons that are not ready
+        document.querySelectorAll('.custom-prompt-btn, .learn-more-btn, .ask-ai-trigger, .explore-ai').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                comingSoonModal.classList.add('active');
+            });
+        });
+        
+        // Close modal
+        closeModal.addEventListener('click', () => {
+            comingSoonModal.classList.remove('active');
+        });
+        
+        // Close modal when clicking outside
+        comingSoonModal.addEventListener('click', (e) => {
+            if (e.target === comingSoonModal) {
+                comingSoonModal.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
 
